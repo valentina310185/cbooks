@@ -1,0 +1,88 @@
+public static function EmptyJSON($object)
+	{
+		return $object == "[]";
+	}
+	
+	public static function IsNullOrEmptyString($object)
+	{
+		return (!isset($object) || trim($object)==='');
+	}
+
+	public static function Equal($object1, $object2)
+	{
+		return $object1 == $object2;
+	}
+
+	public static function EqualSameType($object1, $object2)
+	{
+		return $object1 === $object2;
+	}
+
+	public static function Greater($object, $len)
+	{
+		return strlen($object) > $len;
+	}
+
+	public static function GreaterEqual($object, $len)
+	{
+		return strlen($object) >= $len;
+	}
+
+	public static function Less($object, $len)
+	{
+		return strlen($object) < $len;
+	}
+
+	public static function LessEqual($object, $len)
+	{
+		return strlen($object) <= $len;
+	}
+
+	public static function Email($object)
+	{
+		return filter_var($object, FILTER_VALIDATE_EMAIL);
+	}
+
+	public static function AlphaNumeric($object)
+	{
+		$regex = '/^[a-zA-Z0-9]*$/';
+		return preg_match($regex, $object);
+	}
+
+	/*
+	 * Formats allowed
+	 * (123) 456 7899
+	 * (123).456.7899
+	 * (123)-456-7899
+	 * 123-456-7899
+	 * 123 456 7899
+	 * 1234567899
+	 */
+	public static function Phone($object)
+	{
+		$regex = '/\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/';
+		return preg_match($regex, $object);
+	}
+
+	public static function URL($object)
+	{
+		return filter_var($object, FILTER_VALIDATE_URL);
+	}
+
+	public static function IP($object)
+	{
+		return filter_var($object, FILTER_VALIDATE_IP);
+	}
+	
+	//Verificar
+	public static function ValidDate($date, $format = 'm/d/Y')
+	{
+		$object = GetPostObjectCase($object);
+		if(!isset($date) || strlen($_POST[$object]) == 0 )
+			return false;
+		else 
+		{
+			$d = DateTime::createFromFormat($format, $date);
+			return $d && $d->format($format) == $date;
+		}
+	}

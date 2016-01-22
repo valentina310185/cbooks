@@ -1,0 +1,174 @@
+.com_kunena #Kunena fieldset {
+  border: 1px solid #bfbfbf;
+}
+.com_kunena #Kunena fieldset legend {
+  margin: 0;
+  padding: 0 5px;
+  width: inherit;
+}
+.com_kunena #Kunena .kbutton,
+.com_kunena #Kunena .kbutton:hover,
+.com_kunena #Kunena .kbutton-container .kbutton {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 8px;
+  padding: 5px 10px;
+}
+.com_kunena #Kunena .kattachment-remove,
+.com_kunena #Kunena .kattachment-insert,
+.com_kunena #Kunena .kfile-input-button {
+  color: #444444 !important;
+}
+.com_kunena #Kunena .kattachment-remove:hover,
+.com_kunena #Kunena .kattachment-insert:hover,
+.com_kunena #Kunena .kfile-input-button:hover,
+.com_kunena #Kunena .kattachment-remove:focus,
+.com_kunena #Kunena .kattachment-insert:focus,
+.com_kunena #Kunena .kfile-input-button:focus,
+.com_kunena #Kunena .kattachment-remove:active,
+.com_kunena #Kunena .kattachment-insert:active,
+.com_kunena #Kunena .kfile-input-button:active {
+  color: #cc0000 !important;
+}
+.com_kunena #Kunena #kprofilebox .input span {
+  display: inline-block;
+  padding: 10px 20px 10px 0;
+}
+.com_kunena #Kunena #kprofilebox .input span .inputbox {
+  display: inline-block;
+}
+.com_kunena #Kunena .klist-actions .inputbox,
+.com_kunena #Kunena .klist-bottom .inputbox {
+  display: inline-block;
+  padding: 4px 3px;
+}
+.com_kunena #Kunena .klist-actions .kbutton,
+.com_kunena #Kunena .klist-bottom .kbutton {
+  display: inline-block;
+}
+.com_kunena #Kunena .klist-bottom {
+  padding-bottom: 0 !important;
+  overflow: hidden;
+}
+.com_kunena #Kunena .kmsg-header h2:before,
+.com_kunena #Kunena .kmsg-header h2:after {
+  content: " ";
+  display: table;
+}
+.com_kunena #Kunena .kmsg-header h2:after {
+  clear: both;
+}
+@media (max-width: 767px) {
+  .com_kunena #Kunena td.kcol-first.kcol-ktopicreplies {
+    margin-bottom: 0;
+  }
+}
+.com_kunena #Kunena div.kheader {
+  color: #ffffff !important;
+  padding: 10px 20px;
+}
+.com_kunena #Kunena div.kheader a {
+  color: #ffffff !important;
+}
+.com_kunena #Kunena div.kbody .krowmoderation #kchecktask,
+.com_kunena #Kunena div.kbody .krowmoderation #kchecktarget {
+  margin: 10px;
+}
+.com_kunena #Kunena div.kbody .kbutton {
+  margin: 5px 10px 10px 10px;
+}
+.com_kunena #Kunena div.kbody #kpostmessage #kpost-attachments .kcol-mid .kattachment {
+  overflow: hidden;
+}
+.com_kunena #Kunena div.kbody table td.kcol-mid input {
+  margin: 5px;
+}
+.com_kunena #Kunena div.kbody #kpost-message .kpostbuttons input {
+  margin: 10px 0;
+}
+.com_kunena #Kunena div.kbody #kpost-message .kpostbuttons #kbbcode-poll-options .input-append {
+  width: 100%;
+}
+.com_kunena #Kunena div.kbody #kpost-message .kpostbuttons #kbbcode-video-options #kvideoprovider {
+  margin: 0;
+}
+.com_kunena #Kunena div.kbody #kpost-message .kcol-editor-field #kbbcode-preview {
+  padding: 10px;
+}
+.com_kunena #Kunena form#jumpto {
+  width: 225px;
+}
+.com_kunena #Kunena form#jumpto .inputbox {
+  width: 65%;
+  float: left;
+  margin: 7px 10px 10px;
+}
+.com_kunena #Kunena form#jumpto input.kbutton {
+  float: right;
+  margin: 5px;
+}
+.com_kunena #Kunena #kwhoisonline .kwhoonline {
+  border-width: 0;
+  border-bottom-width: 1px;
+}
+.com_kunena #Kunena #kwhoisonline .kwholegend {
+  border-width: 0;
+  border-top-width: 1px;
+}
+.com_kunena #Kunena .kadvsearch input {
+  margin-bottom: 10px;
+}
+.com_kunena #Kunena .kadvsearch select {
+  background: #ffffff !important;
+  margin-bottom: 10px;
+  padding: 4px 3px;
+}
+.com_kunena #Kunena #kprofile-edit .tabs dt {
+  margin-right: 2px;
+  border-radius: 5px 5px 0 0;
+  font-weight: normal;
+}
+.com_kunena #Kunena #kprofile-edit .tabs .open {
+  background: #0077bb;
+  color: #ffffff;
+}
+.com_kunena #Kunena #kprofile-edit .tabs .closed {
+  background: #666666;
+  color: #ffffff;
+}
+@media (max-width: 991px) {
+  .com_kunena #Kunena #kprofile-tabs .tabs dt {
+    font-size: 12px;
+  }
+}
+@media (max-width: 767px) {
+  .com_kunena #Kunena #kprofile-tabs .tabs dt {
+    width: 100%;
+  }
+}
+.com_kunena #Kunena .search-user #kusersearch {
+  float: left;
+}
+@media (max-width: 767px) {
+  .com_kunena #Kunena .kprofilebox .kprofileboxcnt ul.kprofilebox-welcome input.kbutton {
+    position: static;
+  }
+}
+@media (max-width: 767px) {
+  .com_kunena #Kunena td.kpostbuttons {
+    min-height: 90px;
+  }
+}
+.com_kunena #Kunena #kannouncement .kactions {
+  background-color: #666666;
+}
+.com_kunena #Kunena #kannouncement div > label {
+  display: block;
+  margin-bottom: 10px;
+}
+.com_kunena #Kunena #kannouncement div > label .input-append input {
+  display: inline;
+}
+.com_kunena #Kunena #kannouncement div > label .input-append .icon-calendar:before {
+  font-family: FontAwesome;
+}

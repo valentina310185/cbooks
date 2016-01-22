@@ -1,0 +1,20 @@
+#eblog-wrapper .btn-eb-navbar {
+  height: 30px;
+  width: 44px;
+}
+#eblog-wrapper #eblog-search .search-input input {
+  height: 30px !important;
+}
+.mod-es-recent-blogs .es-nav-blogs {
+  margin: 0;
+  padding: 0;
+}
+.mod-es-recent-blogs .es-nav-blogs li {
+  list-style-type: none;
+}
+.mod-es-recent-blogs .es-nav-blogs li .media-object {
+  margin-bottom: 20px;
+}
+.ezb-mod.mod_easyblogcategories .mod-item {
+  padding-top: 20px !important;
+}
