@@ -21,6 +21,7 @@
 		"jquery.autosize.min.js",
 		"jquery.base64.js",
 		"jspdf.js",
+		"addhtml.js",
 		"jspdf.plugin.autotable.js",
 		"jspdf.plugin.textalign.js",
 		"notify.min.js",

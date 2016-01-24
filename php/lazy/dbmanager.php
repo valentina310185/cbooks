@@ -9,10 +9,10 @@ class DBManager
      * Executes query and returns status of the db result
      * @param query The query string to execute
      */
-    public static function ExecuteNonQuery($query)
+    public static function ExecuteNonQuery($query, $array = null)
     {
         $PDODB = new PDODB();
-        $PDODB->ExecuteNonQuery($query);
+        $PDODB->ExecuteNonQuery($query, $array);
         return $PDODB->GetDatabaseResult();
     }
 	
@@ -20,10 +20,10 @@ class DBManager
      * Executes query returns the db resultset rows
      * @param query The query string to execute
      */
-    public static function ExecuteQuery($query)
+    public static function ExecuteQuery($query, $array = null)
     {
         $PDODB = new PDODB();
-        $PDODB->ExecuteQuery($query);
+        $PDODB->ExecuteQuery($query, $array);
         return $PDODB->GetData();
     }
 }

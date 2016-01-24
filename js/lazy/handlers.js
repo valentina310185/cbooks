@@ -11,7 +11,7 @@ jQuery(document).on("click","a", function(event) {
 	{
 		jQuery.notify("Loading please wait...", "info");
 		jQuery.get(BASE_URL + jQuery(this).attr("href"), function(data, textStatus, jqXHR) {
-			if(jQuery.trim(data) != "" && jqXHR.getResponseHeader("content-type") == "text/html")
+			if(jQuery.trim(data) != "" && jqXHR.getResponseHeader("content-type") != "application/javascript")
 			{
 				jQuery("#main-content").html(ResponseFilter(data));
 				setTimeout(function(){
@@ -28,7 +28,7 @@ jQuery(document).on("click","a", function(event) {
 	else if(jQuery(this).hasClass("add"))
 	{
 		jQuery.get(BASE_URL + jQuery(this).attr("href"), function(data, textStatus, jqXHR) {
-			if(jQuery.trim(data) != "" && jqXHR.getResponseHeader("content-type") == "text/html")
+			if(jQuery.trim(data) != "" && jqXHR.getResponseHeader("content-type") != "application/javascript")
 			{
 				Dialog.Default("<h3>New Record</h3>", ResponseFilter(data), " Ok");
 				setTimeout(function(){
@@ -45,7 +45,7 @@ jQuery(document).on("click","a", function(event) {
 	else if(jQuery(this).hasClass("edit"))
 	{
 		jQuery.post(BASE_URL + jQuery(this).attr("href"), jQuery.parseJSON(jQuery(this).attr("data-id")), function(data, textStatus, jqXHR) {
-			if(jQuery.trim(data) != "" && jqXHR.getResponseHeader("content-type") == "text/html")
+			if(jQuery.trim(data) != "" && jqXHR.getResponseHeader("content-type") != "application/javascript")
 			{
 				Dialog.Default("<h3>Update Record</h3>", ResponseFilter(data), "Ok");
 				setTimeout(function(){
@@ -231,7 +231,7 @@ function ResponseFilter(data)
 function PostDataChildForm(postdata, url)
 {
 	jQuery.post(BASE_URL + url, postdata, function(data, textStatus, jqXHR) {
-			if(jQuery.trim(data) != "" && jqXHR.getResponseHeader("content-type") == "text/html")
+			if(jQuery.trim(data) != "" && jqXHR.getResponseHeader("content-type") != "application/javascript")
 			{
 				Dialog.Default("<h3>New Record</h3>", ResponseFilter(data), " Ok");
 				setTimeout(function(){
@@ -332,7 +332,7 @@ function SubmitForm(form)
 		contentType: false,
 		success: function (data, textStatus, jqXHR, jQueryform) 
 		{
-			if(textStatus == "success" && jqXHR.getResponseHeader("content-type") == "text/html")
+			if(textStatus == "success" && !jQuery(form).hasClass("search") && jqXHR.getResponseHeader("content-type") != "application/javascript")
 			{
 				if(jQuery(form).hasClass("search") && jQuery.trim(data) != "")
 				{
@@ -340,7 +340,7 @@ function SubmitForm(form)
 					jQuery('table').DataTable();
 				}
 			}
-			else if(jQuery(form).hasClass("search") && jQuery.trim(data) == "")
+			else if(jQuery(form).hasClass("search") && jQuery.trim(data) == "" && jqXHR.getResponseHeader("content-type") != "application/javascript")
 			{
 				jQuery("#table-content").html("");
 			}

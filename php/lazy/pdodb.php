@@ -22,18 +22,17 @@ class PDODB extends PDODBConfig
     /**
      * Database result set collection array
      */
-    private $DataCollection = array();
-    
+    private $DataCollection;
     /**
      * Executes a query and returns the result
      */
-    public function __construct($query = null)
+    public function __construct($query = null, $array = null)
     {
         if(is_string($query) && !is_null($query))
         {
             $this->Connect();
             $this->PrepareStatement($query);
-            $this->AddParametersCollection($query);
+            $this->AddParametersCollection($query,$array);                 
             $this->Execute();
         } 
     }
@@ -66,7 +65,7 @@ class PDODB extends PDODBConfig
     }
     
     /**
-     * Closes databse connection
+     * Closes database connection
      * Free some resources
      */
     public function Disconnect()
@@ -79,17 +78,21 @@ class PDODB extends PDODBConfig
      * Sets the form POST values params into values
      * @param query the query string
      */
-    public function AddParametersCollection($query)
+    public function AddParametersCollection($query, $array = null)
     {
-        foreach ($_POST as $name => $value) 
+        if(is_null($array))
+        {
+            $array = $_POST;
+        }
+        foreach ($array as $name => $value) 
         {
 			if (strpos($query, ':' . $name) !== false)
 			{
 				$ocurrences = substr_count($query, ':' . $name);
 				for ($i = 0; $i < $ocurrences; $i++) 
 				{
-					if(is_array($_POST[$name]))
-						$this->Statement->bindValue(':' . $name, implode(', ', $_POST[$name]));
+					if(is_array($array[$name]))
+						$this->Statement->bindValue(':' . $name, implode(', ', $array[$name]));
 					else if (!is_string($value) || !is_numeric($value))
 						$this->Statement->bindValue(':' . $name, $value);
 					else
@@ -111,8 +114,8 @@ class PDODB extends PDODBConfig
 			$ocurrences = substr_count($query, $param);
 			for ($i = 0; $i < $ocurrences; $i++) 
 			{
-				if(is_array($_POST[$name]))
-					$this->Statement->bindValue($param, implode(', ', $_POST[$name]));
+				if(is_array($value))
+					$this->Statement->bindValue($param, implode(', ', $value));
 				else if (!is_string($value) || !is_numeric($value))
 					$this->Statement->bindValue($param, $value);
 				else
@@ -166,13 +169,14 @@ class PDODB extends PDODBConfig
             if ($this->PDO) 
             {
                 $this->Statement->execute();
-                $this->Statement = null;
-                $this->$DBResult = true;
+                $this->DataCollection = $this->Statement->fetchAll();
+                $this->DBResult = true;
             } 
             else if ($this->Connect()) 
             {
                 $this->Execute();
-                $this->$DBResult = true;    
+                $this->DataCollection = $this->Statement->fetchAll();
+                $this->DBResult = true;    
             } 
             else
             {
@@ -200,19 +204,16 @@ class PDODB extends PDODBConfig
      * Returns true if query is executed correctly otherwise false
      * @param query the query string
      */
-    public function ExecuteQuery($query)
+    public function ExecuteQuery($query, $array = null)
     {
         try 
         {
             if ($this->Connect()) 
             {
                 $this->Statement = $this->PDO->prepare($query);
-                if (count($_POST) > 0) 
-                {
-                    $this->AddParametersCollection($query);
-                }
+                $this->AddParametersCollection($query, $array);
                 $this->Statement->execute();
-                $this->fetchRowsCollection();
+                $this->DataCollection = $this->Statement->fetchAll();
                 $this->Statement->closeCursor();
                 $this->Disconnect();
                 return true;
@@ -247,17 +248,14 @@ class PDODB extends PDODBConfig
      * Returns true if query is executed correctly otherwise false
      * @return Boolean
      */
-    public function ExecuteNonQuery($query)
+    public function ExecuteNonQuery($query, $array = null)
     {
         try 
         {
             if ($this->Connect()) 
             {
                 $this->Statement = $this->PDO->prepare($query);
-                if (count($_POST) > 0) 
-                {
-                    $this->AddParametersCollection($query);
-                }
+                $this->AddParametersCollection($query, $array);
                 $this->Statement->execute();
                 $this->Disconnect();
                 $this->DBResult = true;
@@ -307,20 +305,6 @@ class PDODB extends PDODBConfig
     public function UnsetData()
     {
         $this->DataCollection = array();
-    }
-    
-    /**
-     * Fetch Rows values into array
-     */
-    public function FetchRowsCollection()
-    {
-        if ($this->Statement->rowCount() != 0) 
-        {
-            while ($row = $this->Statement->fetch(PDO::FETCH_ASSOC)) 
-            {
-                $this->DataCollection[] = array_map('utf8_encode', $row);
-            }
-        }
     }
 }
 ?>

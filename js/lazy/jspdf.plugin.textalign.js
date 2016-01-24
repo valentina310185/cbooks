@@ -1,16 +1,16 @@
 (function(API){
-    API.textCenter = function(text, y) {
+    API.textCenter = function(htmltext, y) {
 		var fontSize = this.internal.getFontSize();
         var pageWidth = this.internal.pageSize.width;
-        var txtWidth = this.getStringUnitWidth(text)*fontSize/this.internal.scaleFactor;
+        var txtWidth = this.getStringUnitWidth(htmltext)*fontSize/this.internal.scaleFactor;
         var x = ( pageWidth - txtWidth ) / 2;
-        this.text(text,x,y);
+        this.text(htmltext,x,y);
 	};
-	API.textRight = function(text, y) {
+	API.textRight = function(htmltext, y) {
 		var fontSize = this.internal.getFontSize();
         var pageWidth = this.internal.pageSize.width;
-        var txtWidth = this.getStringUnitWidth(text)*fontSize/this.internal.scaleFactor;
+        var txtWidth = this.getStringUnitWidth(htmltext)*fontSize/this.internal.scaleFactor;
         var x = ( pageWidth - txtWidth );
-        this.text(text,x,y);
+        this.text(htmltext,x,y);
 	};
 })(jsPDF.API);
