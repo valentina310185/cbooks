@@ -83,7 +83,7 @@ JHtml::_('behavior.keepalive');
 		</fieldset>
 	</form>
 </div>
-<div>
+<!--<div>
 	<ul class="nav nav-tabs nav-stacked">
 		<li>
 			<a href="<?php echo JRoute::_('index.php?option=com_users&view=reset'); ?>">
@@ -102,4 +102,4 @@ JHtml::_('behavior.keepalive');
 		</li>
 		<?php endif; ?>
 	</ul>
-</div>
+</div>-->
