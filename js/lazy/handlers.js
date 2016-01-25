@@ -332,17 +332,17 @@ function SubmitForm(form)
 		contentType: false,
 		success: function (data, textStatus, jqXHR, jQueryform) 
 		{
-			if(textStatus == "success" && !jQuery(form).hasClass("search") && jqXHR.getResponseHeader("content-type") != "application/javascript")
+			if(textStatus == "success" && jQuery(form).hasClass("search") && jqXHR.getResponseHeader("content-type") != "application/javascript")
 			{
-				if(jQuery(form).hasClass("search") && jQuery.trim(data) != "")
+				if(jQuery.trim(data) != "")
 				{
 					jQuery("#table-content").html(data);
 					jQuery('table').DataTable();
 				}
-			}
-			else if(jQuery(form).hasClass("search") && jQuery.trim(data) == "" && jqXHR.getResponseHeader("content-type") != "application/javascript")
-			{
-				jQuery("#table-content").html("");
+				else if(jQuery.trim(data) == "")
+				{
+					jQuery("#table-content").html("");
+				}
 			}
 		},
 		error: function (xhr, textStatus, error)
