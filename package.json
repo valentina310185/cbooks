@@ -1,5 +1,8 @@
 {
-    "version": "1.0.0.1",
-    "update_url": "http://download1582.mediafire.com/70s76pz6u7hg/bjuhkgsix9kdvj1/update.jpa",
-    "update_script": ""
+	"version": "1.0.0.1",
+	"database_scripts": [{
+		"script": "command 1"
+	}, {
+		"script": "command 2"
+	}]
 }
