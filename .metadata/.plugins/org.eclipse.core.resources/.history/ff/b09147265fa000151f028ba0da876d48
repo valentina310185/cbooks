@@ -1,0 +1,210 @@
+<?php
+require_once "requestmanager.php";
+require_once "filemanager.php";
+require_once "systemqueries.php";
+require_once "model.php";
+require_once "logger.php";
+
+class Is
+{
+	/**
+     * Gets the form inputs and validates it's format and dataype and if it's required or not
+     * @param form_name The name of the form
+     * @exclude_columns array of columns names that you dont want to validate
+     */
+	public static function ValidRequest($form_name, $exclude_columns = null)
+	{
+	    Model::
+		$inputs = Model::ArrayToObject(SystemQueries::form_input_structure($form_name));
+		foreach($inputs as $input) 
+		{
+			if($exclude_columns == null || !in_array($input->input_name, $exclude_columns))
+			{			
+				self::Set($input);
+				self::IsNulllable($input);
+				if(self::VarcharBlobText($input))
+				{
+					continue;
+				}
+				if(self::Integer($input))
+				{
+					continue;
+				}
+				if(self::DoubleFloat($input))
+				{
+					continue;
+				}			
+			}
+		}
+		return true;
+	}
+	
+    /**
+     * 
+     */
+	public static function Set($input)
+	{
+		if($input->input_name != "file" && !isset($_POST[$input->input_name])) 
+		{
+			Logger::Request();
+			Logger::Error($input->input_name . " is not set on POST");
+			RequestManager::RequestUnexpectedValueTypeOrFormat();
+		}
+	}
+	
+	public static function IsNullable($input)
+	{
+		//Check if input cant be null or empty.
+		if($input->input_is_nullable === "YES")
+		{
+			//Files doesn't come on $_POST so skip validation
+			if($input['type'] == "file")
+			{
+				//If file is set and exist the another file exist delete the old file and upload the new file - Update Operation
+				if(isset($_POST[$input->input_name]) && !empty($_POST[$input->input_name]) && is_uploaded_file($_FILES[$input->input_name]["tmp_name"]) && $_FILES[$input->input_name]['error'] == UPLOAD_ERR_OK)
+				{
+					FileManager::DeleteFile(Security::DecrypText($_POST[$input->input_name]));
+					FileManager::UploadFormFiles($input->form_name, $input->input_name);
+				}
+				//If file is set and post is empty and upload the file - Insert Operation
+				else if(!isset($_POST[$input->input_name]) && empty($_POST[$input->input_name]) && is_uploaded_file($_FILES[$input->input_name]["tmp_name"]) && $_FILES[$input->input_name]['error'] == UPLOAD_ERR_OK)
+				{
+					FileManager::UploadFormFiles($input->form_name, $input->input_name);
+				}
+				//Set back the file url
+				else if(isset($_POST[$input->input_name]) && !empty($_POST[$input->input_name]))
+				{
+					$_POST[$input->input_name] = Security::DecrypText($_POST[$input->input_name]);
+				}
+			}
+			else
+			{
+				$value = trim($_POST[$input->input_name]);
+				if($value != "") 
+				{
+					if(!preg_match("~" . $input->input_regex . "~", $value))
+					{
+						Logger::Request();
+						Logger::Error($input->input_name . " failed evaluating the regex " . $input->input_regex);
+						RequestManager::RequestUnexpectedValueTypeOrFormat();
+					}
+				}
+			}
+		}
+		//Checks is input can't be null
+		else if($input->input_is_nullable === "NO")
+		{
+			//Upload the file and check is url is set
+			if($input->input_type == "file")
+			{
+				//If file is set and exist the another file exist delete the old file and upload the new file - Update Operation
+				if(isset($_POST[$input->input_name]) && !empty($_POST[$input->input_name]) && is_uploaded_file($_FILES[$input->input_name]["tmp_name"]) && $_FILES[$input->input_name]['error'] == UPLOAD_ERR_OK)
+				{
+					FileManager::DeleteFile(Security::DecrypText($_POST[$input->input_name]));
+					FileManager::UploadFormFiles($input->form_name, $input->input_name);
+				}
+				//If file is set and post is empty and upload the file - Insert Operation
+				else if(!isset($_POST[$input->input_name]) && empty($_POST[$input->input_name]) && is_uploaded_file($_FILES[$input->input_name]["tmp_name"]) && $_FILES[$input->input_name]['error'] == UPLOAD_ERR_OK)
+				{
+					FileManager::UploadFormFiles($input->form_name, $input->input_name);
+				}
+				//Set back the file url
+				else if(isset($_POST[$input->input_name]) && !empty($_POST[$input->input_name]))
+				{
+					$_POST[$input->input_name] = Security::DecrypText($_POST[$input->input_name]);
+				}
+				$value = trim($_POST[$input->input_name]);
+				if($value == "")
+				{
+					Logger::Request();
+					Logger::Error($input->input_name . " is a file required and the value is empty.");
+					RequestManager::RequestUnexpectedValueTypeOrFormat();
+				}				
+			}
+			else
+			{
+				$value = trim($_POST[$input->input_name]);
+				if($value == "" || !preg_match("~" . $input['regex'] . "~", $value))
+				{
+					Logger::Request();
+					Logger::Error($input->input_name . " is empty or failed evaluating the regex " . $input->input_regex);
+					RequestManager::RequestUnexpectedValueTypeOrFormat();
+				}
+			}					
+		}
+	}
+	
+	public static function VarcharBlobText($input)
+	{
+		if( $input->data_type == "CHAR" || 
+			$input->data_type == "VARCHAR" || 
+			$input->data_type == "TINYTEXT" || 
+			$input->data_type == "TEXT" || 
+			$input->data_type == "MEDIUMTEXT" || 
+			$input->data_type == "LONGTEXT" ||
+			$input->data_type == "BINARY" || 
+			$input->data_type == "VARBINARY" ||
+			$input->data_type == "TINYBLOB" ||
+			$input->data_type == "MEDIUMBLOB" ||
+			$input->data_type == "BLOB" ||
+			$input->data_type == "LONGBLOB" || 
+			$input->data_type == "ENUM" ||
+			$input->data_type == "SET")
+		{
+			$value = trim($_POST[$input->input_name]);
+			if(!is_string($value) || strlen($value) > $input['maxlength'])
+			{
+				Logger::Request();
+				Logger::Error($input->input_name . " is not a string or exceded the maximun character. " . $input->input_name . " length = " . strlen($value) . ". Character maximum length = " . $input->input_maxlength . ".");
+				RequestManager::RequestUnexpectedValueTypeOrFormat();
+			}
+			return true;
+		}
+		return false;
+	}
+	
+	public static function Integer($input)
+	{
+		if( $input->data_type == "TINYINT" || 
+			$input->data_type == "SMALLINT" || 
+			$input->data_type == "MEDIUMINT" || 
+			$input->data_type == "INT" || 
+			$input->data_type == "INTERGER" || 
+			$input->data_type == "BIGINT" ||
+			$input->data_type == "BIT" || 
+			$input->data_type == "BOOL" ||
+			$input->data_type == "BOOLEAN" ||
+			$input->data_type == "SERIAL")
+		{
+			if(!is_int((int)$_POST[$input->input_name]))
+			{
+				Logger::Request();
+				Logger::Error($input->input_name . " is not an interger. " . $input->input_name . " = " . $_POST[$input->input_name]);
+				RequestManager::RequestUnexpectedValueTypeOrFormat();
+			}
+			return true;
+		}
+		return false;
+	}
+	
+	public static function DoubleFloat($input)
+	{
+		if( $input->data_type == "DECIMAL" || 
+			$input->data_type == "DEC" || 
+			$input->data_type == "FLOAT" || 
+			$input->data_type == "DOUBLE" ||
+			$input->data_type == "NUMERIC" ||
+			$input->data_type == "DOUBLE PRECISION" ||
+			$input->data_type == "REAL")
+		{
+			if(!is_float((float)$_POST[$input->input_name]))
+			{
+				Logger::Request();
+				Logger::Error($input->input_name . " is not a float or double. " . $input->input_name . " = " . $_POST[$input->input_name]);
+				RequestManager::RequestUnexpectedValueTypeOrFormat();
+			}
+			return true;
+		}
+		return false;
+	}
+}

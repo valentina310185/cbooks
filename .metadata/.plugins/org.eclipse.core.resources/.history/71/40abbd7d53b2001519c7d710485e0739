@@ -1,0 +1,112 @@
+<?php
+/**
+ * This class is a php wrapper to pop up bootstrap dialogs from server side code 
+ */
+class Dialog
+{
+	public static function _Default($title, $msg, $buttonText, $callback = "function(){}")
+	{
+		?>
+		Dialog.Default("<?=$title?>", "<?=$msg?>", "<?=$buttonText?>", <?=$callback?>)
+		<?php
+	}
+	
+	public static function Info($title, $msg, $buttonText, $callback = "function(){}")
+	{
+		?>
+		Dialog.Info("<?=$title?>", "<?=$msg?>", "<?=$buttonText?>", <?=$callback?>)
+		<?php
+	}
+	
+	public static function Primary($title, $msg, $buttonText, $callback = "function(){}")
+	{
+		?>
+		Dialog.Primary("<?=$title?>", "<?=$msg?>", "<?=$buttonText?>", <?=$callback?>)
+		<?php
+	}
+	
+	public static function Success($title, $msg, $buttonText, $callback = "function(){}")
+	{
+		?>
+		Dialog.Success("<?=$title?>", "<?=$msg?>", "<?=$buttonText?>", <?=$callback?>)
+		<?php
+	}
+	
+	public static function Warning($title, $msg, $buttonText, $callback = "function(){}")
+	{
+		?>
+		Dialog.Warning("<?$title?>", "<?=$msg?>", "<?=$buttonText?>", <?=$callback?>)
+		<?php
+	}
+	
+	public static function Danger($title, $msg, $buttonText, $callback = "function(){}")
+	{
+		?>
+		Dialog.Danger("<?=$title?>", "<?=$msg?>", "<?=$buttonText?>", <?=$callback?>)
+		<?php
+	}
+	
+	public static function Confirm($title, $msg, $buttonTextPrimary, $buttonTextSecondary, $callback = "function(){}")
+	{
+		?>
+		Dialog.Confirm("<?=$title?>", "<?=$msg?>", "<?=$buttonTextPrimary?>", "<?=$buttonTextSecondary?>", <?=$callback?>)
+		<?php
+	}
+	
+	public static function Decision($title, $msg, $buttonTextPrimary, $buttonTextSecondary, $buttonTextTertiary, $callback = "function(){}")
+	{
+		?>
+		Dialog.Decision("<?=$title?>", "<?=$msg?>", "<?=$buttonTextPrimary?>", "<?=$buttonTextSecondary?>", "<?=$buttonTextTertiary?>", <?=$callback?>)
+		<?php
+	}
+	
+	public static function Prompt($input_msg, $callback = "function(){}")
+	{
+		?>
+		Dialog.Prompt("<?=$input_msg?>", <?=$callback?>)
+		<?php
+	}
+	
+	public static function PromptDouble($input_msg1, $input_msg2, $callback = "function(){}")
+	{
+		?>
+		Dialog.PromptDouble("<?=$input_msg1?>", "<?=$input_msg2?>", <?=$callback?>)
+		<?php
+	}
+	
+	public static function PromptTriple($input_msg1, $input_msg2, $input_msg3, $callback = "function(){}")
+	{
+		?>
+		Dialog.PromptTriple("<?=$input_msg1?>", "<?=$input_msg2?>", "<?=$input_msg3?>", <?=$callback?>)
+		<?php
+	}
+    
+    public static function NotifyInfo($msg)
+    {
+        ?>
+        jQuery.Notify("<?=$msg?>", "info")
+        <?php
+    }
+    
+    public static function NotifySuccess($msg)
+    {
+        ?>
+        jQuery.Notify("<?=$msg?>", "success")
+        <?php
+    }
+    
+    public static function NotifyWarning($msg)
+    {
+        ?>
+        jQuery.Notify("<?=$msg?>", "warn")
+        <?php
+    }
+    
+    public static function NotifyDanger($msg)
+    {
+        ?>
+        jQuery.Notify("<?=$msg?>", "error")
+        <?php
+    }
+}
+?>

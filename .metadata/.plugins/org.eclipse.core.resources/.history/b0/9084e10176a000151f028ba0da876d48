@@ -1,0 +1,40 @@
+<?php
+require_once "pdodb.php";
+/**
+ * Manage Database connections and queries
+ */
+class DBManager extends PDODB
+{
+    /**
+     * Executes query and returns status of the db result
+     */
+    public static function ExecuteNonQuery($query)
+    {
+        if (parent::ExecuteNonQuery($query))
+            return "1";
+        else 
+            return "0";
+    }
+	
+    /**
+     * Executes query returns the db resultset rows json encoded string
+     */
+    public static function ExecuteQuery($query)
+    {
+        if (parent::ExecuteQuery($query))
+            return parent::getData();
+        else
+            return array();
+    }
+    
+    /**
+     * Executes query returns the db resultset rows json decoded 
+     */
+    public static function ExecuteQueryJSONDecoded($query)
+    {
+        if (parent::ExecuteQuery($query))
+            return json_decode(parent::getData(), true);
+        else
+            return json_decode("[]", true);
+    }
+}

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sites>
+<site>
+<name>New Connection</name>
+<source>file:/C:/wamp/www</source>
+<destination>file:/C:/wamp/www</destination>
+</site>
+</sites>

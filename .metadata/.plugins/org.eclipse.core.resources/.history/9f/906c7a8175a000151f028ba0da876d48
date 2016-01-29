@@ -1,0 +1,25 @@
+<?php
+abstract class PDODBConfig 
+{
+	static protected function Config() 
+    {
+	   //Database Config
+	   $config = array();
+	   // Database connection values:
+	   $config["dbConnection"] = array();
+	   // Database driver:
+	   $config["dbConnection"]["driver"] = "mysql:";
+	   // Database hostname:
+	   $config["dbConnection"]["host"] = "host=localhost;";
+	   // Database name:
+	   $config["dbConnection"]["name"] = "dbname=lazy;";
+	   // Database charset:
+	   $config["dbConnection"]["charset"] = "charset=utf8;";
+	   // Database username:
+	   $config["dbConnection"]["user"] = "root";
+	   // Database password:
+	   $config["dbConnection"]["pass"] = "elgueta#12";
+	   // Return Connection Config
+	   return $config;
+	}
+}

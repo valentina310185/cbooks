@@ -1,0 +1,253 @@
+<?php
+require_once "config.php";
+require_once "logger.php";
+/**
+ * This class manage the database connections
+ */
+class PDODB extends PDODBConfig
+{
+    //Database private fields
+    private static $PD;
+    private static $statement;
+    private static $DataCollection = array();
+    
+    /** 
+     * Opens a database connection
+     * @return Boolean
+     */
+    public static function Connect()
+    {
+        try {
+            $DBconfig = PDODBConfig::Config();
+            self::$PD = new PDO($DBconfig["dbConnection"]["driver"] . $DBconfig["dbConnection"]["host"] . $DBconfig["dbConnection"]["name"], $DBconfig["dbConnection"]["user"], $DBconfig["dbConnection"]["pass"], array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8")) or die("ConnectionString error. Please check your database config.");
+			unset($DBconfig);
+            self::$PD->setAttribute(PDO::ATTR_EMULATE_PREPARES, true);
+            self::$PD->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            self::$PD->setAttribute(PDO::MYSQL_ATTR_FOUND_ROWS, true);
+            self::$PD->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
+            return true;
+        }
+        catch (PDOException $e) {
+            Logger::Database($e);
+            return false;
+        }
+        catch (Exception $e) {
+            Logger::Database($e);
+            return false;
+        }
+    }
+    
+    /**
+     * Closes databse connection
+     * Free some resources
+     */
+    public static function Disconnect()
+    {
+        self::$PD        = null;
+        self::$statement = null;
+    }
+    
+    /**
+     * Sets the form POST values params into values
+     * @param query the query string
+     */
+    public static function addParametersCollection($query)
+    {
+        foreach ($_POST as $name => $value) 
+        {
+			if (strpos($query, ':' . $name) !== false)
+			{
+				$ocurrences = substr_count($query, ':' . $name);
+				for ($i = 0; $i < $ocurrences; $i++) 
+				{
+					if(is_array($_POST[$name]))
+						self::$statement->bindValue(':' . $name, implode(', ', $_POST[$name]));
+					else if (!is_string($value) || !is_numeric($value))
+						self::$statement->bindValue(':' . $name, $value);
+					else
+						self::$statement->bindValue(':' . $name, self::filterText($value));
+				}
+				 
+            }        
+        }
+    }
+	
+    /**
+     * Sets a query param into a value
+     * @param param the parameter name
+     * @param value the parameter value
+     */
+    public static function addParam($param, $value)
+    {
+        if (strpos($query, $param) !== false)
+		{
+			$ocurrences = substr_count($query, $param);
+			for ($i = 0; $i < $ocurrences; $i++) 
+			{
+				if(is_array($_POST[$name]))
+					self::$statement->bindValue($param, implode(', ', $_POST[$name]));
+				else if (!is_string($value) || !is_numeric($value))
+					self::$statement->bindValue($param, $value);
+				else
+					self::$statement->bindValue($param, self::filterText($value));
+			}			 
+		} 
+    }
+    
+    /**
+     * Filters the values entered by the user to prevent and remove malicious scripts
+     * @param value the value to filter
+     */
+    public static function filterText($value)
+    {
+    	$value = strip_tags($value);
+        $value = htmlentities($value);
+        $value = trim($value);
+        return $value;
+    }
+    
+    /**
+     * Prepares the statement to be executed
+     * @param query the query string
+     */
+    public static function PrepareStatement($query)
+    {
+        if (self::$PD) {
+            self::$statement = self::$PD->prepare($query);
+        } else if (self::Connect()) {
+            self::PrepareStatement();
+        } else
+            return false;
+    }
+    
+    /**
+     * Execute
+     * Executes the statement the query statement
+     * @param UsePostParamCollection if true the statement will bind the post param before it's execute the query
+     * @return Boolean
+     */
+    public static function Execute($UsePostParamCollection = false)
+    {
+        try {
+            if (self::$PD) {
+                if ($usePostParamCollection)
+                    self::$UsePostParamCollection();
+                self::$statement->execute();
+                self::fetchRowsCollection();
+                self::$statement->closeCursor();
+                self::$statement = null;
+                return true;
+            } else if (self::Connect()) {
+                self::Execute();
+            } else
+                return false;
+        }
+        catch (PDOException $e) {
+            file_put_contents('PDOErrors.txt', $e, FILE_APPEND);
+            return false;
+        }
+        catch (Exception $e) {
+            file_put_contents('PDOErrors.txt', $e, FILE_APPEND);
+            return false;
+        }
+    }
+    
+    /**
+     * Opens Connection
+     * Binds ParameterCollection
+     * Executes a Query
+     * Returns true if query is executed correctly otherwise false
+     * @param query the query string
+     * @return Boolean the database result
+     */
+    public static function ExecuteQuery($query)
+    {
+        try {
+            if (self::Connect()) {
+                self::$statement = self::$PD->prepare($query);
+                if (count($_POST) > 0) {
+                    self::addParametersCollection($query);
+                }
+                self::$statement->execute();
+                self::fetchRowsCollection();
+                self::$statement->closeCursor();
+                self::Disconnect();
+                return true;
+            }
+            return false;
+        }
+        catch (PDOException $e) {
+            Logger::Database($e);
+            return false;
+        }
+        catch (Exception $e) {
+            Logger::Database($e);
+            return false;
+        }
+    }
+    
+    /**
+     * ExecuteNonQuery()
+     * Opens Connection
+     * Binds ParameterCollection
+     * Executes a Query
+     * Closes Connection
+     * Returns true if query is executed correctly otherwise false
+     * @return Boolean
+     */
+    public static function ExecuteNonQuery($query)
+    {
+        try {
+            if (self::Connect()) {
+                self::$statement = self::$PD->prepare($query);
+                if (count($_POST) > 0) {
+                    self::addParametersCollection($query);
+                }
+                self::$statement->execute();
+                self::Disconnect();
+                return true;
+            }
+            return false;
+        }
+        catch (PDOException $e) {
+            Logger::Database($e);
+            return false;
+        }
+        catch (Exception $e) {
+            Logger::Database($e);
+            return false;
+        }
+    }
+    
+    /**
+     * Return a json encoded string the database result set
+     * @return String
+     */
+    public static function getData()
+    {
+        return json_encode(self::$DataCollection);
+    }
+    
+    /**
+     * Free result set array
+     */
+    public static function unsetData()
+    {
+        self::$DataCollection = array();
+    }
+    
+    /**
+     * Fetch Rows values into array
+     * 
+     */
+    public static function fetchRowsCollection()
+    {
+        if (self::$statement->rowCount() != 0) 
+        {
+            while ($row = self::$statement->fetch(PDO::FETCH_ASSOC)) 
+            {
+                self::$DataCollection [] = array_map('utf8_encode', $row);
+            }
+        }
+    }
+}

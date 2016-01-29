@@ -1,0 +1,299 @@
+<?php
+require_once "config.php";
+require_once "logger.php";
+/**
+ * This class manage the database connections
+ */
+class PDODB extends PDODBConfig
+{
+    //Database private fields
+    private $PD;
+    private $Statement;
+    private $DBResult = false;
+    private $DataCollection = array();
+    
+    /**
+     * Executes a query and returns the result
+     */
+    public function __construct($query = null)
+    {
+        if(is_string($query) && !is_null($query))
+        {
+            $this->Connect();
+            $this->PrepareStatement($query);
+            $this->AddParametersCollection($query);
+            $this->Execute();
+        } 
+    }
+    /** 
+     * Opens a database connection
+     * @return Boolean
+     */
+    public function Connect()
+    {
+        try 
+        {
+            $DBconfig = PDODBConfig::Config();
+            $this->PD = new PDO($DBconfig["dbConnection"]["driver"] . $DBconfig["dbConnection"]["host"] . $DBconfig["dbConnection"]["name"], $DBconfig["dbConnection"]["user"], $DBconfig["dbConnection"]["pass"], array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8")) or die("ConnectionString error. Please check your database config.");
+			unset($DBconfig);
+            $this->PD->setAttribute(PDO::ATTR_EMULATE_PREPARES, true);
+            $this->PD->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $this->PD->setAttribute(PDO::MYSQL_ATTR_FOUND_ROWS, true);
+            $this->PD->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
+            return true;
+        }
+        catch (PDOException $e) {
+            Logger::Database($e);
+            return false;
+        }
+        catch (Exception $e) {
+            Logger::Database($e);
+            return false;
+        }
+    }
+    
+    /**
+     * Closes databse connection
+     * Free some resources
+     */
+    public function Disconnect()
+    {
+        $this->PD        = null;
+        $this->Statement = null;
+    }
+    
+    /**
+     * Sets the form POST values params into values
+     * @param query the query string
+     */
+    public function AddParametersCollection($query)
+    {
+        foreach ($_POST as $name => $value) 
+        {
+			if (strpos($query, ':' . $name) !== false)
+			{
+				$ocurrences = substr_count($query, ':' . $name);
+				for ($i = 0; $i < $ocurrences; $i++) 
+				{
+					if(is_array($_POST[$name]))
+						$this->Statement->bindValue(':' . $name, implode(', ', $_POST[$name]));
+					else if (!is_string($value) || !is_numeric($value))
+						$this->Statement->bindValue(':' . $name, $value);
+					else
+						$this->Statement->bindValue(':' . $name, $this->FilterText($value));
+				}				 
+            }        
+        }
+    }
+	
+    /**
+     * Sets a query param into a value
+     * @param param the parameter name
+     * @param value the parameter value
+     */
+    public function AddParam($param, $value)
+    {
+        if (strpos($query, $param) !== false)
+		{
+			$ocurrences = substr_count($query, $param);
+			for ($i = 0; $i < $ocurrences; $i++) 
+			{
+				if(is_array($_POST[$name]))
+					$this->Statement->bindValue($param, implode(', ', $_POST[$name]));
+				else if (!is_string($value) || !is_numeric($value))
+					$this->Statement->bindValue($param, $value);
+				else
+					$this->Statement->bindValue($param, $this->FilterText($value));
+			}			 
+		} 
+    }
+    
+    /**
+     * Filters the values entered by the user to prevent and remove malicious scripts
+     * @param value the value to filter
+     */
+    public function FilterText($value)
+    {
+    	$value = strip_tags($value);
+        $value = htmlentities($value);
+        $value = trim($value);
+        return $value;
+    }
+    
+    /**
+     * Prepares the statement to be executed
+     * @param query the query string
+     */
+    public function PrepareStatement($query)
+    {
+        if ($this->PD) 
+        {
+            $this->Statement = $this->PD->prepare($query);
+            return true;
+        } 
+        else if ($this->Connect()) 
+        {
+            $this->PrepareStatement();
+            return true;
+        } 
+        else
+        {
+            return false;     
+        }            
+    }
+    
+    /**
+     * Execute
+     * Executes the query statement
+     * @param UsePostParamCollection if true the statement will bind the post param before it's execute the query
+     */
+    public function Execute()
+    {
+        try 
+        {
+            if ($this->PD) 
+            {
+                $this->Statement->execute();
+                $this->FetchRowsCollection();
+                $this->Statement->closeCursor();
+                $this->Statement = null;
+                $DBResult = true;
+            } 
+            else if ($this->Connect()) 
+            {
+                $this->Execute();
+                $DBResult = true;    
+            } 
+            else
+            {
+                $DBResult = false;    
+            }                
+        }
+        catch (PDOException $e) 
+        {
+            file_put_contents('PDOErrors.txt', $e, FILE_APPEND);
+            $DBResult = false;
+        }
+        catch (Exception $e) 
+        {
+            file_put_contents('PDOErrors.txt', $e, FILE_APPEND);
+            $DBResult = false;
+        }
+    }
+    
+    /**
+     * Opens Connection
+     * Binds ParameterCollection on Post
+     * Executes a Query
+     * Returns true if query is executed correctly otherwise false
+     * @param query the query string
+     */
+    public function ExecuteQuery($query)
+    {
+        try 
+        {
+            if ($this->Connect()) 
+            {
+                $this->Statement = $this->PD->prepare($query);
+                if (count($_POST) > 0) 
+                {
+                    $this->AddParametersCollection($query);
+                }
+                $this->Statement->execute();
+                $this->fetchRowsCollection();
+                $this->Statement->closeCursor();
+                $this->Disconnect();
+                return true;
+            }
+            $DBResult = false;
+        }
+        catch (PDOException $e) 
+        {
+            Logger::Database($e);
+            $DBResult = false;
+        }
+        catch (Exception $e) 
+        {
+            Logger::Database($e);
+            $DBResult = false;
+        }
+    }
+    
+    /**
+     * ExecuteNonQuery()
+     * Opens Connection
+     * Binds ParameterCollection on Post
+     * Executes a Query
+     * Closes Connection
+     * Returns true if query is executed correctly otherwise false
+     * @return Boolean
+     */
+    public function ExecuteNonQuery($query)
+    {
+        try 
+        {
+            if ($this->Connect()) 
+            {
+                $this->Statement = $this->PD->prepare($query);
+                if (count($_POST) > 0) 
+                {
+                    $this->AddParametersCollection($query);
+                }
+                $this->Statement->execute();
+                $this->Disconnect();
+                $DBResult = true;
+            }
+            $DBResult = false;
+        }
+        catch (PDOException $e) 
+        {
+            Logger::Database($e);
+            $DBResult = false;
+        }
+        catch (Exception $e) 
+        {
+            Logger::Database($e);
+            $DBResult = false;
+        }
+    }
+    
+    /**
+     * Return the database result set
+     * @return String
+     */
+    public function GetData()
+    {
+        return $this->DataCollection;
+    }
+    
+    /**
+     * Gets the database result of the query
+     * @return boolean
+     */
+    public function GetDatabaseResult()
+    {
+        return $this->DBResult;
+    }
+    
+    /**
+     * Free result set array
+     */
+    public function UnsetData()
+    {
+        $this->DataCollection = array();
+    }
+    
+    /**
+     * Fetch Rows values into array
+     */
+    public function FetchRowsCollection()
+    {
+        if ($this->Statement->rowCount() != 0) 
+        {
+            while ($row = $this->Statement->fetch(PDO::FETCH_ASSOC)) 
+            {
+                $this->DataCollection[] = array_map('utf8_encode', $row);
+            }
+        }
+    }
+}

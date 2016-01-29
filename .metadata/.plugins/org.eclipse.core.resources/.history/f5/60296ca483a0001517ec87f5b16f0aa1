@@ -1,0 +1,15 @@
+<?php
+require_once "model.php";
+class Request
+{
+	public $Cookie,$Enviroment,$Files,$Get,$Post,$Request,$Server;
+	public function __construct () 
+	{
+		$this->Cookie = Model::Get($_COOKIE);
+		$this->Enviroment =	Model::Get($_ENV);
+		$this->Files = Model::Get($_FILES);
+		$this->Get = Model::Get($_GET);
+		$this->Post = Model::Get($_REQUEST);
+		$this->Server = Model::Get($_SERVER);
+	}
+}

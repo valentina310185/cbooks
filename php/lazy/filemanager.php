@@ -235,8 +235,7 @@ class FileManager
           if($zip->extractTo($dst))
           {
               $zip->close();
-              return true;
-              
+              return true;              
           }
           else
           {
@@ -282,7 +281,8 @@ class FileManager
      */
     public static function DownloadFileToWebServer($filename, $file_url) 
     {
-        return @file_put_contents($filename, fopen($file_url, 'r'));
+        set_time_limit(0);
+        return file_put_contents($filename, fopen($file_url, 'r'));
     }
     
     /**

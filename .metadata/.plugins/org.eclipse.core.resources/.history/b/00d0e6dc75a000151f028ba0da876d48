@@ -1,0 +1,33 @@
+<?php
+// Get PDODB class
+require_once "pdodb.php";
+// Inherits from PDODB
+class DBManager extends PDODB
+{
+    //Executes query and returns status of the db result
+    public static function ExecuteNonQuery($query)
+    {
+        if (parent::ExecuteNonQuery($query))
+            return "1";
+        else 
+            return "0";
+    }
+	
+    //Executes query returns the db resultset rows json encoded
+    public static function ExecuteQuery($query)
+    {
+        if (parent::ExecuteQuery($query))
+            return parent::getData();
+        else
+            return array();
+    }
+    
+    //Executes query returns the db resultset rows json decoded
+    public static function ExecuteQueryJSONDecoded($query)
+    {
+        if (parent::ExecuteQuery($query))
+            return json_decode(parent::getData(), true);
+        else
+            return json_decode("[]", true);
+    }
+}

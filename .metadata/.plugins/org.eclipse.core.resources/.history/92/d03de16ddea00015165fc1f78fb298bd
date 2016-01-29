@@ -1,0 +1,345 @@
+<?php
+require_once "dbmanager.php";
+
+class SystemQueries
+{
+	//Gets the form
+	public static function GetFormDefinition($form_name_id)
+	{
+		$form_query = "
+			select 
+			`form_name_id`,
+			`class_name`, 
+			`form_title_code`, 
+			`form_id`, 
+	        `form_name`, 
+			`form_action`, 
+			`form_method`, 
+			`form_class`, 
+			`form_enctype`, 
+			`form_autocomplete`, 
+			`form_target`, 
+			`form_options`, 
+			`form_above_code`, 
+			`form_below_code`, 
+			`form_is_hidden`
+			from 
+			`lazy_forms` 
+			where
+			form_is_hidden = 'NO'
+			and form_name_id =  '" . $form_name_id . "'
+			limit 1
+			";
+		return DBManager::ExecuteQuery($form_query);
+	}
+	
+	//Get the search form inputs
+	public static function GetSearchInputs($form_name_id)
+	{
+		$form_input_query = "
+			select 
+			`input_form_id`, 
+			`form_name_id`,
+			`select_query_name`, 
+			`select_column_name_for_value`, 
+			`select_column_name_for_description`,
+			`input_grid_layout_class`, 
+			#`input_validation_name`, 
+			`input_regex`,
+			`input_regex_comments`, 
+			`input_id`, 
+			`input_name`, 
+			`input_label_text`, 
+			`input_type`, 
+			`input_maxlength`, 
+			`input_class`, 
+			`input_attributes`, 
+			`input_placeholder`, 
+			`input_order_number`, 
+			`input_data_type`, 
+			`input_is_nullable`, 
+			`input_is_search_field`, 
+			`input_is_hidden`, 
+			`input_above_input_code`, 
+			`input_below_input_code` 
+			from 
+			`lazy_forms_inputs` as fi,
+			`lazy_inputs_validations` as iv
+			where 
+			form_name_id = '" . $form_name_id . "' 
+			and fi.input_validation_name = iv.input_validation_name
+			and input_is_search_field = 'YES'
+			order by input_order_number asc
+			";
+		return DBManager::ExecuteQuery($form_input_query);
+	}
+	
+	//Gets the form inputs definitions
+	public static function GetFormInputsDefinition($form_name_id)
+	{
+		$form_input_query = "
+			select 
+			`input_form_id`, 
+			`form_name_id`, 
+			`select_query_name`, 
+			`select_column_name_for_value`, 
+			`select_column_name_for_description`,
+			`input_grid_layout_class`,
+			`input_validation_name`, 
+			`input_regex`, 
+			`input_regex_comments`,
+			`input_id`, 
+			`input_name`, 
+			`input_label_text`, 
+			`input_type`, 
+			`input_maxlength`, 
+			`input_class`, 
+			`input_attributes`, 
+			`input_files_extensions`, 
+			`input_files_mime_types`, 
+			`input_placeholder`, 
+			`input_order_number`, 
+			`input_data_type`, 
+			`input_is_nullable`, 
+			`input_is_search_field`, 
+			`input_is_hidden`, 
+			`input_above_input_code`, 
+			`input_below_input_code` 
+			from 
+			`lazy_forms_inputs` as fi,
+			`lazy_inputs_validations` as iv
+			where 
+			form_name_id =  '" . $form_name_id . "'
+			and fi.input_validation_id = iv.input_validation_id
+			and input_is_hidden = 'NO'
+			order by input_order_number asc
+			";
+		return DBManager::ExecuteQuery($form_input_query);
+	}
+	
+	//Gets the form inputs
+	public static function GetFormInputsFileType($form_name_id, $input_name)
+	{
+		$form_input_query = "
+			select 
+			`input_form_id`, 
+			`form_name_id`, 
+			`select_query_name`, 
+			`select_column_name_for_value`, 
+			`select_column_name_for_description`,
+			`input_grid_layout_class`,
+			`input_id`, 
+			`input_name`, 
+			`input_label_text`, 
+			`input_type`, 
+			`input_maxlength`, 
+			`input_class`, 
+			`input_attributes`, 
+			`input_files_extensions`, 
+			`input_files_mime_types`, 
+			`input_placeholder`, 
+			`input_order_number`, 
+			`input_data_type`, 
+			`input_is_nullable`, 
+			`input_is_search_field`, 
+			`input_is_hidden`, 
+			`input_above_input_code`, 
+			`input_below_input_code` 
+			from 
+			`lazy_forms_inputs`
+			where 
+			form_name_id =  '" . $form_name_id . "'
+			and input_name =  '" . $input_name . "'
+			and hidden = 'NO'
+			and type = 'file'
+			order by input_order_number asc
+			";
+		return DBManager::ExecuteQuery($form_input_query);
+	}
+	
+	//Gets a query stored on the database
+	public static function GetQuery($query_name)
+	{
+		return DBManager::ExecuteQuery("
+			select 
+			`query_name`, 
+			`query_text`, 
+			`query_comments`
+			FROM `lazy_queries` 
+			where
+			query_name = '" . $query_name . "'
+			limit 1
+			");
+	}
+	
+	//Gets the record to update
+	public static function GetRecordToUpdate($query_name)
+	{
+		$query = self::GetQuery($query_name);
+		return DBManager::ExecuteQuery($query[0]["query_text"]);
+	}
+	
+	//Gets select options
+	public static function GetSelectOptions($query_name)
+	{
+		$query = self::GetQuery($query_name);
+		return DBManager::ExecuteQuery($query[0]["query_text"]);
+	}
+	
+	//Get table view definition
+	public static function GetTableViewDefinitions($table_view_name)
+	{
+		$query = "
+			select 
+			`table_view_name`, 
+			`class_name`, 
+			`table_name`,
+			`table_column_key_name`, 
+			`table_action`, 
+			`table_options` 
+			from `lazy_table_views`
+			where 
+			table_view_name =  '" . $table_view_name . "'
+			limit 1
+			";
+		return DBManager::ExecuteQuery($query);
+	}
+	
+	//Get the view
+	public static function GetView($view_name)
+	{
+		$query = "
+			SELECT 
+			`view_name`, 
+			`view_code` 
+			FROM 
+			`lazy_views` 
+			WHERE 
+			view_name =  '" . $view_name . "'
+			limit 1
+			";
+		return DBManager::ExecuteQuery($query);
+	}
+	
+	//Gets the view columns
+	public static function GetViewColumns($table_view_name)
+	{
+		$query = "
+			SELECT 
+			`table_view_columns_id`, 
+			`table_view_name`, 
+			`table_view_column_column_name`, 
+			`table_view_column_column_header_label`,
+			`table_view_column_order_number`, 
+			`table_view_column_hidden`, 
+			`column_header_text_align`, 
+			`column_header_font_style`, 
+			`column_header_font_weight`, 
+			`column_header_background_color`, 
+			`column_header_text_color`, 
+			`rows_text_align`, 
+			`rows_font_style`, 
+			`rows_font_weight`, 
+			`rows_background_color`,
+			`rows_text_color` 
+			FROM `lazy_table_views_columns`
+			WHERE 
+			table_view_name =  '" . $table_view_name . "'
+			and hidden = 'NO'
+			order by table_view_column_order_number asc
+			";
+		return DBManager::ExecuteQuery($query);
+	}
+	
+	//Get the search records
+	public static function GetSearchRows($query_name)
+	{
+		$query = self::GetQuery($query_name);
+		return DBManager::ExecuteQuery($query[0]["query"]);
+	}
+	
+	//Get the form input structure
+	public static function form_input_structure($form_name)
+	{
+		$query = "
+			SELECT 
+			`input_form_id`, 
+			`form_name`, 
+			`input_id`, 
+			`input_name`, 
+			`input_label_text`, 
+			`input_type`, 
+			`input_maxlength`, 
+			`input_class`, 
+			`input_attributes`, 
+			`input_placeholder`, 
+			`input_order_number`, 
+			`input_data_type`, 
+			`input_is_nullable`, 
+			`input_is_search_field`, 
+			`input_is_hidden`, 
+			`input_above_input_code`, 
+			`input_below_input_code`, 
+			`input_validation_name`, 
+			`input_regex`, 
+			`input_regex_comments`  
+			FROM 
+			`lazy_forms_inputs` as fi, 
+			`lazy_inputs_validations` as iv
+			WHERE
+			fi.input_validation_id = iv.input_validation_id
+			and fi.input_is_hidden = 'NO'
+			and fi.form_name = '" . $form_name . "';
+		";
+		return DBManager::ExecuteQuery($query);
+	}
+	
+	//Get the buttons menu
+	public static function GetButtonsMenuDefinition($menus_groups_name)
+	{
+		$query = "
+			select 
+			`menu_id`, 
+			`menus_groups_name`, 
+			`class_name`,
+			`function_name`,
+			`menu_class`, 
+			`menu_flag`, 
+			`menu_name`, 
+			`menu_url`, 
+			`menu_icon`, 
+			`menu_order_number`, 
+			`menu_above_menu_code`, 
+			`menu_below_menu_code`, 
+			`menu_is_hidden` 
+			from `lazy_menus` 
+			where 
+			menus_groups_name = '" . $menus_groups_name . "'
+			and menu_is_hidden = 'NO'
+			order by menu_order_number asc
+			";
+		return DBManager::ExecuteQuery($query);
+	}
+	
+	//Gets the class code
+	public static function GetClass($class_name)
+	{
+		$query = "
+		SELECT 
+		`class_name`, 
+		`class_code`, 
+		`class_comments` 
+		FROM `lazy_classes` 
+		WHERE class_name = '" . $class_name . "'
+		limit 1
+		;";
+		return current(DBManager::ExecuteQuery($query));
+	}
+	
+	//Gets data from a query
+	public static function GetData($query_name)
+	{
+		$query = SystemQueries::GetQuery($query_name);
+		return DBManager::ExecuteQuery($query[0]["query_text"]);
+	}
+}

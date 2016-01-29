@@ -1,0 +1,551 @@
+<?php
+require_once "systemqueries.php";
+
+class Menu
+{	
+	/**
+     * This function display a big buttons menu
+     * @param menus_groups_name the name of the menu group
+     */
+	public static function ButtonsBig($menus_groups_name)
+	{			
+		$menus = SystemQueries::GetButtonsMenuDefinition($menus_groups_name);		
+		if(count($menus) == 0)
+		{
+			?>
+			No sub menus defined yet for this menu
+			<?php
+		}
+		else
+		{
+			?>
+			<div id="menu_<?=$menus_groups_name?>" class="row">
+			<?php
+			foreach($menus as $menu)
+			{
+				eval("?>" . $menu["menu_above_menu_code"]);
+				?>
+				<a href="<?=$menu["menu_url"]?>?class_name=<?=$menu["class_name"]?>&function_name=<?=$menu["function_name"]?>" class="col-sm-4 col-xs-12 btn btn-md <?=$menu["menu_class"]?> <?=$menu["menu_flag"]?>">
+					<i class="fa fa-4x <?=$menu["menu_icon"]?>"></i>
+					<br>
+					<?=$menu["menu_name"]?>
+				</a>
+				<?php
+				eval("?>" . $menu["menu_below_menu_code"]);
+			}
+			?>
+			</div>
+			<?php
+		}
+	}
+	
+	/**
+     * This function display a block of buttons menu
+     * @param menus_groups_name the name of the menu group
+     */
+	public static function ButtonsBlock($menus_groups_name)
+	{			
+		$menus = SystemQueries::GetButtonsMenuDefinition($menus_groups_name);		
+		if(count($menus) == 0)
+		{
+			?>
+			No sub menus defined yet for this menu
+			<?php
+		}
+		else
+		{
+			?>
+			<div id="menu_<?=$menus_groups_name?>" class="row">
+			<?php
+			foreach($menus as $menu)
+			{
+				eval("?>" . $menu["menu_above_menu_code"]);
+				?>
+				<a href="<?=$menu["menu_url"]?>?class_name=<?=$menu["class_name"]?>&function_name=<?=$menu["function_name"]?>" class="btn btn-lg btn-block <?=$menu["menu_class"]?> <?=$menu["menu_flag"]?>">
+					<i class="fa fa-4x <?=$menu["menu_icon"]?>"></i>
+					<br>
+					<?=$menu["menu_name"]?>
+				</a>
+				<?php
+				eval("?>" . $menu["menu_below_menu_code"]);
+			}
+			?>
+			</div>
+			<?php
+		}
+	}
+	
+	/**
+     * This function display a buttons item list menu
+     * @param menus_groups_name the name of the menu group
+     */
+	public static function ButtonsItemList($menus_groups_name)
+	{			
+		$menus = SystemQueries::GetButtonsMenuDefinition($menus_groups_name);		
+		if(count($menus) == 0)
+		{
+			?>
+			No sub menus defined yet for this menu
+			<?php
+		}
+		else
+		{
+			?>
+			<div id="menu_<?=$menus_groups_name?>" class="row">
+				<div class="list-group">
+				<?php
+				foreach($menus as $menu)
+				{
+					eval("?>" . $menu["menu_above_menu_code"]);
+					?>
+					<a href="<?=$menu["menu_url"]?>?class_name=<?=$menu["class_name"]?>&function_name=<?=$menu["function_name"]?>" class="list-group-item <?=$menu["menu_class"]?> <?=$menu["menu_flag"]?>">
+						<i class="fa <?=$menu["menu_icon"]?>"></i> 
+						<?=$menu["menu_name"]?>
+					</a>
+					<?php
+					eval("?>" . $menu["menu_below_menu_code"]);
+				}
+				?>
+				</div>
+			</div>
+			<?php
+		}
+	}
+	
+	/**
+     * This function display a group of buttons horizontaly menu
+     * @param menus_groups_name the name of the menu group
+     */
+	public static function ButtonsGroupHorizontal($menus_groups_name)
+	{			
+		$menus = SystemQueries::GetButtonsMenuDefinition($menus_groups_name);		
+		if(count($menus) == 0)
+		{
+			?>
+			No sub menus defined yet for this menu
+			<?php
+		}
+		else
+		{
+			?>
+			<div id="menu_<?=$menus_groups_name?>" class="row">
+				<div class="btn-group">
+				<?php
+				foreach($menus as $menu)
+				{
+					eval("?>" . $menu["menu_above_menu_code"]);
+					?>
+					<a href="<?=$menu["menu_url"]?>?class_name=<?=$menu["class_name"]?>&function_name=<?=$menu["function_name"]?>" class="btn <?=$menu["menu_class"]?> <?=$menu["menu_flag"]?>">
+						<i class="fa <?=$menu["menu_icon"]?>"></i> 
+						<?=$menu["menu_name"]?>
+					</a>
+					<?php
+					eval("?>" . $menu["menu_below_menu_code"]);
+				}
+				?>
+				</div>
+			</div>
+			<?php
+		}
+	}
+	
+	/**
+     * This function display a group of buttons vertically menu
+     * @param menus_groups_name the name of the menu group
+     */
+	public static function ButtonsGroupVertical($menus_groups_name)
+	{			
+		$menus = SystemQueries::GetButtonsMenuDefinition($menus_groups_name);		
+		if(count($menus) == 0)
+		{
+			?>
+			No sub menus defined yet for this menu
+			<?php
+		}
+		else
+		{
+			?>
+			<div id="menu_<?=$menus_groups_name?>" class="row">
+				<div class="btn-group-vertical">
+				<?php
+				foreach($menus as $menu)
+				{
+					eval("?>" . $menu["menu_above_menu_code"]);
+					?>
+					<a href="<?=$menu["menu_url"]?>?class_name=<?=$menu["class_name"]?>&function_name=<?=$menu["function_name"]?>" class="btn <?=$menu["menu_class"]?> <?=$menu["menu_flag"]?>">
+						<i class="fa <?=$menu["menu_icon"]?>"></i> 
+						<?=$menu["menu_name"]?>
+					</a>
+					<?php
+					eval("?>" . $menu["menu_below_menu_code"]);
+				}
+				?>
+				</div>
+			</div>
+			<?php
+		}
+	}
+	
+	/**
+     * This function display a group of buttons jutified menu
+     * @param menus_groups_name the name of the menu group
+     */
+	public static function ButtonsGroupJustified($menus_groups_name)
+	{			
+		$menus = SystemQueries::GetButtonsMenuDefinition($menus_groups_name);		
+		if(count($menus) == 0)
+		{
+			?>
+			No sub menus defined yet for this menu
+			<?php
+		}
+		else
+		{
+			?>
+			<div id="menu_<?=$menus_groups_name?>" class="row">
+				<div class="btn-group btn-group-justified">
+				<?php
+				foreach($menus as $menu)
+				{
+					eval("?>" . $menu["menu_above_menu_code"]);
+					?>
+					<a href="<?=$menu["menu_url"]?>?class_name=<?=$menu["class_name"]?>&function_name=<?=$menu["function_name"]?>" class="btn <?=$menu["menu_class"]?> <?=$menu["menu_flag"]?>">
+						<i class="fa <?=$menu["menu_icon"]?>"></i> 
+						<?=$menu["menu_name"]?>
+					</a>
+					<?php
+					eval("?>" . $menu["menu_below_menu_code"]);
+				}
+				?>
+				</div>
+			</div>
+			<?php
+		}
+	}
+	
+	/**
+     * This function display a group of buttons in a dropdown menu
+     * @param menus_groups_name the name of the menu group
+     */
+	public static function ButtonsDropdown($menus_groups_name, $button_text)
+	{			
+		$menus = SystemQueries::GetButtonsMenuDefinition($menus_groups_name);		
+		if(count($menus) == 0)
+		{
+			?>
+			No sub menus defined yet for this menu
+			<?php
+		}
+		else
+		{
+			?>
+			<div id="menu_<?=$menus_groups_name?>" class="row">
+				<div class="btn-group">
+					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						<?=$button_text?> 
+						<span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu">
+					<?php
+					foreach($menus as $menu)
+					{
+						eval("?>" . $menu["menu_above_menu_code"]);
+						?>
+						<li>
+							<a href="<?=$menu["menu_url"]?>?class_name=<?=$menu["class_name"]?>&function_name=<?=$menu["function_name"]?>" class="<?=$menu["menu_flag"]?>">
+								<i class="fa <?=$menu["menu_icon"]?>"></i> 
+								<?=$menu["menu_name"]?>
+							</a>
+						</li>
+						<?php
+						eval("?>" . $menu["menu_below_menu_code"]);
+					}
+					?>
+					</ul>
+				</div>
+			</div>
+			<?php
+		}
+	}
+
+	/**
+     * This function display a group of buttons in a dropdown that drops up menu
+     * @param menus_groups_name the name of the menu group
+     * @param button_text the text of the dropdown button
+     */
+	public static function ButtonsDropdownDropUp($menus_groups_name, $button_text)
+	{			
+		$menus = SystemQueries::GetButtonsMenuDefinition($menus_groups_name);		
+		if(count($menus) == 0)
+		{
+			?>
+			No sub menus defined yet for this menu
+			<?php
+		}
+		else
+		{
+			?>
+			<div id="menu_<?=$menus_groups_name?>" class="row">
+				<div class="btn-group dropup">
+					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						<?=$button_text?> 
+						<span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu">
+					<?php
+					foreach($menus as $menu)
+					{
+						eval("?>" . $menu["menu_above_menu_code"]);
+						?>
+						<li>
+							<a href="<?=$menu["menu_url"]?>?class_name=<?=$menu["class_name"]?>&function_name=<?=$menu["function_name"]?>" class="<?=$menu["menu_flag"]?>">
+								<i class="fa <?=$menu["menu_icon"]?>"></i> 
+								<?=$menu["menu_name"]?>
+							</a>
+						</li>
+						<?php
+						eval("?>" . $menu["menu_below_menu_code"]);
+					}
+					?>
+					</ul>
+				</div>
+			</div>
+			<?php
+		}
+	}
+	
+	/**
+     * This function display a group of buttons in a tabs menu
+     * @param menus_groups_name the name of the menu group
+     */
+	public static function ButtonsNavTabs($menus_groups_name)
+	{			
+		$menus = SystemQueries::GetButtonsMenuDefinition($menus_groups_name);		
+		if(count($menus) == 0)
+		{
+			?>
+			No sub menus defined yet for this menu
+			<?php
+		}
+		else
+		{
+			?>
+			<div id="menu_<?=$menus_groups_name?>" class="row">
+				<ul class="nav nav-tabs">
+				<?php
+				foreach($menus as $menu)
+				{
+					eval("?>" . $menu["menu_above_menu_code"]);
+					?>
+					<li>
+						<a href="<?=$menu["menu_url"]?>?class_name=<?=$menu["class_name"]?>&function_name=<?=$menu["function_name"]?>" class="<?=$menu["menu_flag"]?>">
+							<i class="fa <?=$menu["menu_icon"]?>"></i> 
+							<?=$menu["menu_name"]?>
+						</a>
+					</li>
+					<?php
+					eval("?>" . $menu["menu_below_menu_code"]);
+				}
+				?>
+				</ul>
+			</div>
+			<?php
+		}
+	}
+	
+	/**
+     * This function display a group of buttons in a tabs menu stacked
+     * @param menus_groups_name the name of the menu group
+     */
+	public static function ButtonsNavTabsStacked($menus_groups_name)
+	{			
+		$menus = SystemQueries::GetButtonsMenuDefinition($menus_groups_name);		
+		if(count($menus) == 0)
+		{
+			?>
+			No sub menus defined yet for this menu
+			<?php
+		}
+		else
+		{
+			?>
+			<div id="menu_<?=$menus_groups_name?>" class="row">
+				<ul class="nav nav-tabs nav-stacked">
+				<?php
+				foreach($menus as $menu)
+				{
+					eval("?>" . $menu["menu_above_menu_code"]);
+					?>
+					<li>
+						<a href="<?=$menu["menu_url"]?>?class_name=<?=$menu["class_name"]?>&function_name=<?=$menu["function_name"]?>" class="<?=$menu["menu_flag"]?>">
+							<i class="fa <?=$menu["menu_icon"]?>"></i> 
+							<?=$menu["menu_name"]?>
+						</a>
+					</li>
+					<?php
+					eval("?>" . $menu["menu_below_menu_code"]);
+				}
+				?>
+				</ul>
+			</div>
+			<?php
+		}
+	}
+	
+	/**
+     * This function display a group of buttons in a tabs menu
+     * @param menus_groups_name the name of the menu group
+     */
+	public static function ButtonsNavTabsJustified($menus_groups_name)
+	{			
+		$menus = SystemQueries::GetButtonsMenuDefinition($menus_groups_name);		
+		if(count($menus) == 0)
+		{
+			?>
+			No sub menus defined yet for this menu
+			<?php
+		}
+		else
+		{
+			?>
+			<div id="menu_<?=$menus_groups_name?>" class="row">
+				<ul class="nav nav-tabs nav-justified">
+				<?php
+				foreach($menus as $menu)
+				{
+					eval("?>" . $menu["menu_above_menu_code"]);
+					?>
+					<li>
+						<a href="<?=$menu["menu_url"]?>?class_name=<?=$menu["class_name"]?>&function_name=<?=$menu["function_name"]?>" class="<?=$menu["menu_flag"]?>">
+							<i class="fa <?=$menu["menu_icon"]?>"></i> 
+							<?=$menu["menu_name"]?>
+						</a>
+					</li>
+					<?php
+					eval("?>" . $menu["menu_below_menu_code"]);
+				}
+				?>
+				</ul>
+			</div>
+			<?php
+		}
+	}
+	
+	/**
+     * This function display a group of buttons in a nav pills menu
+     * @param menus_groups_name the name of the menu group
+     */
+	public static function ButtonsNavPills($menus_groups_name)
+	{			
+		$menus = SystemQueries::GetButtonsMenuDefinition($menus_groups_name);		
+		if(count($menus) == 0)
+		{
+			?>
+			No sub menus defined yet for this menu
+			<?php
+		}
+		else
+		{
+			?>
+			<div id="menu_<?=$menus_groups_name?>" class="row">
+				<ul class="nav nav-pills">
+				<?php
+				foreach($menus as $menu)
+				{
+					eval("?>" . $menu["menu_above_menu_code"]);
+					?>
+					<li>
+						<a href="<?=$menu["menu_url"]?>?class_name=<?=$menu["class_name"]?>&function_name=<?=$menu["function_name"]?>" class="<?=$menu["menu_flag"]?>">
+							<i class="fa <?=$menu["menu_icon"]?>"></i> 
+							<?=$menu["menu_name"]?>
+						</a>
+					</li>
+					<?php
+					eval("?>" . $menu["menu_below_menu_code"]);
+				}
+				?>
+				</ul>
+			</div>
+			<?php
+		}
+	}
+	
+	/**
+     * This function display a group of buttons in a nav pills stacked menu
+     * @param menus_groups_name the name of the menu group
+     */
+	public static function ButtonsNavPillsStacked($menus_groups_name)
+	{			
+		$menus = SystemQueries::GetButtonsMenuDefinition($menus_groups_name);		
+		if(count($menus) == 0)
+		{
+			?>
+			No sub menus defined yet for this menu
+			<?php
+		}
+		else
+		{
+			?>
+			<div id="menu_<?=$menus_groups_name?>" class="row">
+				<ul class="nav nav-pills nav-stacked">
+				<?php
+				foreach($menus as $menu)
+				{
+					eval("?>" . $menu["menu_above_menu_code"]);
+					?>
+					<li>
+						<a href="<?=$menu["menu_url"]?>?class_name=<?=$menu["class_name"]?>&function_name=<?=$menu["function_name"]?>" class="<?=$menu["menu_flag"]?>">
+							<i class="fa <?=$menu["menu_icon"]?>"></i> 
+							<?=$menu["menu_name"]?>
+						</a>
+					</li>
+					<?php
+					eval("?>" . $menu["menu_below_menu_code"]);
+				}
+				?>
+				</ul>
+			</div>
+			<?php
+		}
+	}
+	
+	/**
+     * This function display a group of buttons in a nav pills stacked menu
+     * @param menus_groups_name the name of the menu group
+     */
+	public static function ButtonsNavPillsJustified($menus_groups_name)
+	{			
+		$menus = SystemQueries::GetButtonsMenuDefinition($menus_groups_name);		
+		if(count($menus) == 0)
+		{
+			?>
+			No sub menus defined yet for this menu
+			<?php
+		}
+		else
+		{
+			?>
+			<div id="menu_<?=$menus_groups_name?>" class="row">
+				<ul class="nav nav-pills nav-justified">
+				<?php
+				foreach($menus as $menu)
+				{
+					eval("?>" . $menu["menu_above_menu_code"]);
+					?>
+					<li>
+						<a href="<?=$menu["menu_url"]?>?class_name=<?=$menu["class_name"]?>&function_name=<?=$menu["function_name"]?>" class="<?=$menu["menu_flag"]?>">
+							<i class="fa <?=$menu["menu_icon"]?>"></i> 
+							<?=$menu["menu_name"]?>
+						</a>
+					</li>
+					<?php
+					eval("?>" . $menu["menu_below_menu_code"]);
+				}
+				?>
+				</ul>
+			</div>
+			<?php
+		}
+	}
+}
+?>

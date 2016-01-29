@@ -9,7 +9,8 @@ set_time_limit(0);
 //Downloads the cbooks zip folder
 if($_GET["action"] == "download_zip")
 {
-    if(FileManager::DownloadFileToWebServer("update.zip", "https://github.com/arivera12/cbooks/archive/master.zip"))
+    require_once "php/lazy/filemanager.php";
+    if(!FileManager::DownloadFileToWebServer("update.zip", "https://github.com/arivera12/cbooks/archive/master.zip"))
     {
         header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
     }
