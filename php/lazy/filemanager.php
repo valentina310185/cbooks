@@ -204,6 +204,52 @@ class FileManager
 			rmdir($dir);
 		}
 	 }
+    
+    public static function CopyFilesAndDirectoriesRecursively($src, $dst) 
+    {
+        $dir = opendir($src);
+        @mkdir($dst);
+        while(false !== ($file = readdir($dir))) 
+        {
+            if (( $file != '.' ) && ( $file != '..' )) 
+            {
+                if ( is_dir($src . '/' . $file) ) 
+                {
+                    self::CopyFilesAndDirectoriesRecursively($src . '/' . $file,$dst . '/' . $file);
+                }
+                else 
+                {
+                    @copy($src . '/' . $file,$dst . '/' . $file);
+                }
+            }
+        }
+        closedir($dir);
+    }
+    
+    public static function Unzip($src, $dst)
+    {
+        $zip = new ZipArchive;
+        $resource = $zip->open($src);
+        if ($resource === true) 
+        {           
+          if($zip->extractTo($dst))
+          {
+              $zip->close();
+              return true;
+              
+          }
+          else
+          {
+              $zip->close();
+              return false;
+          }
+        } 
+        else 
+        {
+          return false;
+        }
+    }
+    
 	 
 	 /**
       * Remove a Directory Recursively
@@ -231,6 +277,14 @@ class FileManager
 	   } 
 	}
 	
+    /**
+     * Downloads a file from the folder uploads
+     */
+    public static function DownloadFileToWebServer($filename, $file_url) 
+    {
+        return @file_put_contents($filename, fopen($file_url, 'r'));
+    }
+    
     /**
      * Downloads a file from the folder uploads
      */

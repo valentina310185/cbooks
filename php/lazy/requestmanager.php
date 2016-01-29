@@ -8,6 +8,7 @@ class RequestManager
 {	
 	/**
      * Manages the request
+     * @param $Request The request object
      */
 	public static function RequestHandler($Request)
 	{
@@ -27,41 +28,61 @@ class RequestManager
      */
 	private static function InvokeMethod($Request)
 	{
-		$class = Model::ArrayToObject(SystemQueries::GetClass($Request->Get->class_name));
-		if(count($class) === 0)
-		{
-			Logger::Error("Request error: The requested class_name doesn't exist. Requested class_name:" . $Request->Get->class_name . " - function_name:" . $Request->Get->function_name);
-			self::RequestClassOrMethodNotExist();
-		}
-		else
-		{
-			if(is_callable(array($class->class_name, $Request->Get->function_name), true))
-			{
-				try
-				{
-					eval("?>" . $class->class_code);
-					if(method_exists($class->class_name,$Request->Get->function_name))
-					{
-						call_user_func(array($class->class_name, $Request->Get->function_name));
-					}
-					else
-					{
-						Logger::Error("Request error: The requested function doesn't exist. Requested class_name:" . $Request->Get->class_name . " - function_name:" . $Request->Get->function_name);
-						self::RequestClassOrMethodNotExist();
-					}
-				}
-				catch (Exception $e) 
-				{
-					Logger::Error("Request error: The class code could not be interpreted at runtime. Please check that your code is free of errors. Requested class_name:" . $Request->Get->class_name . " - function_name:" . $Request->Get->function_name);
-					self::RequestRuntimeErrorOnCompilingCode();
-				}							
-			}
-			else
-			{
-				Logger::Error("Request error: The requested function name can't be used to call a method. Requested class_name:" . $Request->Get->class_name . " - function_name:" . $Request->Get->function_name);
-				self::RequestClassOrMethodNotExist();
-			}
-		}
+	    //Check if the class exist in a file inside the controllers folder
+	    //Note the class_name must be same has the file name to prevent security issues
+	    if(file_exists("controllers/" . $Request->Get->class_name . ".php"))
+        {
+            require_once "controllers/" . $Request->Get->class_name . ".php";
+            if(method_exists($Request->Get->class_name,$Request->Get->function_name))
+            {
+                call_user_func(array($Request->Get->class_name, $Request->Get->function_name));
+            }
+            else
+            {
+                Logger::Error("Request error: The requested function doesn't exist. Requested class_name:" . $Request->Get->class_name . " - function_name:" . $Request->Get->function_name);
+                self::RequestClassOrMethodNotExist();
+            }
+        }
+        //Else look on the database
+        else 
+        {
+            $class = Model::ArrayToObject(SystemQueries::GetClass($Request->Get->class_name));
+            if(count($class) === 0)
+            {
+                Logger::Error("Request error: The requested class_name doesn't exist. Requested class_name:" . $Request->Get->class_name . " - function_name:" . $Request->Get->function_name);
+                self::RequestClassOrMethodNotExist();
+            }
+            else
+            {
+                if(is_callable(array($class->class_name, $Request->Get->function_name), true))
+                {
+                    try
+                    {
+                        eval("?>" . $class->class_code);
+                        if(method_exists($class->class_name,$Request->Get->function_name))
+                        {
+                            call_user_func(array($class->class_name, $Request->Get->function_name));
+                        }
+                        else
+                        {
+                            Logger::Error("Request error: The requested function doesn't exist. Requested class_name:" . $Request->Get->class_name . " - function_name:" . $Request->Get->function_name);
+                            self::RequestClassOrMethodNotExist();
+                        }
+                    }
+                    catch (Exception $e) 
+                    {
+                        Logger::Error("Request error: The class code could not be interpreted at runtime. Please check that your code is free of errors. Requested class_name:" . $Request->Get->class_name . " - function_name:" . $Request->Get->function_name);
+                        self::RequestRuntimeErrorOnCompilingCode();
+                    }                           
+                }
+                else
+                {
+                    Logger::Error("Request error: The requested function name can't be used to call a method. Requested class_name:" . $Request->Get->class_name . " - function_name:" . $Request->Get->function_name);
+                    self::RequestClassOrMethodNotExist();
+                }
+            }
+        }
+		
 	}
 	
     /**
